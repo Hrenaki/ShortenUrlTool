@@ -9,6 +9,6 @@ namespace Data
     public class UrlEntity : Entity
     {
         public string LongUrl { get; set; }
-        public string ShortUrlRelativePath { get; set; }
+        public string ShortRelativeUrl { get; set; }
     }
 }
