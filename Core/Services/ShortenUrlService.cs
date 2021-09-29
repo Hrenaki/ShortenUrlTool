@@ -21,17 +21,44 @@ namespace Core.Services
 
         public string CreateShortRelativeUrl(string longUrl)
         {
-            var urlEntity = new UrlEntity() { LongUrl = longUrl };
-            _urlDbContext.Urls.Add(urlEntity);
+            if(!Uri.TryCreate(longUrl, UriKind.Absolute, out _))
+            {
+                return null;
+            }
 
-            var shortRelativeUrl = GetByteString(urlEntity.Id);
-            urlEntity.ShortRelativeUrl = shortRelativeUrl;
+            var urlEntity = _urlDbContext.Urls.SingleOrDefault(entity => string.Equals(entity.LongUrl, longUrl));
 
-            _urlDbContext.Update(urlEntity);
+            if(urlEntity != null)
+            {
+                return urlEntity.ShortRelativeUrl;
+            }
 
-            _urlDbContext.SaveChanges();
+            using (var transaction = _urlDbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    urlEntity = new UrlEntity() { LongUrl = longUrl };
+                    _urlDbContext.Urls.Add(urlEntity);
+                    _urlDbContext.SaveChanges();
 
-            return shortRelativeUrl;
+                    var shortRelativeUrl = GetByteString(urlEntity.Id);
+                    urlEntity.ShortRelativeUrl = shortRelativeUrl;
+
+                    _urlDbContext.Update(urlEntity);
+
+                    _urlDbContext.SaveChanges();
+
+                    transaction.Commit();
+
+                    return shortRelativeUrl;
+                }
+                catch(Exception)
+                {
+                    transaction.Rollback();
+
+                    return null;
+                }
+            }
         }
 
         public string GetLongUrlFromShortRelativeUrl(string shortRelativeUrl)
@@ -45,8 +72,13 @@ namespace Core.Services
         {
             var bytes = BitConverter.GetBytes(number);
 
-            var result = Convert.ToBase64String(bytes);
-            return result;
+            var sb = new StringBuilder();
+            foreach(var b in bytes)
+            {
+                sb.Append(b.ToString("x2"));
+            }
+
+            return sb.ToString();
         }
     }
 }
