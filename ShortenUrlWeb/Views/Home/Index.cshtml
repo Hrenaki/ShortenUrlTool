@@ -5,7 +5,46 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <p>TEST</p>
+            <h2 class="text-center">Shorten Url Service</h2>
+
+            <form class="form-inline mb-2">
+                <div class="form-group mr-2">
+                    <input type="text" class="form-control" id="longUrl" placeholder="Enter long url">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary" id="shortenButton" onclick="shortenButtonClick()">Shorten!</button>
+                </div>
+            </form>
+            <div class="" id="result">aaa</div>
         </div>
     </div>
 </div>
+
+<script>
+    var resultObject = null;
+    var longUrlField = null;
+
+    $(document).ready(function () {
+        longUrlField = $('#longUrl');
+        resultObject = $('#result');
+
+        resultObject.hide();
+    });
+
+    var shortenButtonClick = function () {
+        var data = { longUrl: longUrlField.val() };
+        debugger;
+
+        $.ajax({
+            type: "POST",
+            url: '/home',
+            data: data,
+            success: function (data) {
+                debugger;
+                console.log(data);
+                resultObject.html(data);
+                resultObject.show();
+            }
+        });
+    };
+</script>
