@@ -23,7 +23,7 @@ namespace API.Controllers
 
             _shortenUrlService = shortenUrlService;
         }
-        
+
         [HttpGet]
         [Route(_shortenUrlHandlingMethodRelativeRoute)]
         public IActionResult Index(string shortRelativeUrl)
@@ -39,14 +39,7 @@ namespace API.Controllers
                 return this.NotFound();
             }
 
-            return new RedirectResult(longUrl);
-        }
-
-        public static string GetRelativeRoute()
-        {
-            var route = string.Join('/', _controllerRelativeRoute, _shortenUrlHandlingMethodRelativeRoute);
-
-            return route;
+            return Redirect(longUrl);
         }
     }
 }
