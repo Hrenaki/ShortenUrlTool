@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Extensions;
 
 namespace API.Controllers
 {
@@ -40,6 +41,11 @@ namespace API.Controllers
             }
 
             return Redirect(longUrl);
+        }
+
+        public static string GetUrl(IUrlHelper helper, object values, string scheme)
+        {
+            return helper.Action(nameof(Index), typeof(RedirectController).GetName(), values, scheme);
         }
     }
 }

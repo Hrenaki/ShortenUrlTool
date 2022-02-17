@@ -51,12 +51,10 @@ namespace ShortenUrlWeb.Controllers
                 return PartialView("Result", result);
             }
 
-            var actionName = "Index";
-            var controllerName = "Redirect";
             var values = new { shortRelativeUrl = shortRelativeUrl };
 
-            var url = this.Url.Action(actionName, controllerName, values, Request.Scheme);
-            if(url == null)
+            var url = RedirectController.GetUrl(Url, values, Request.Scheme);
+            if (url == null)
             {
                 result.IsSuccessful = false;
                 result.Message = "Can't create url to redirect tool!";
