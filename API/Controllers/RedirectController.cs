@@ -10,12 +10,8 @@ using API.Extensions;
 
 namespace API.Controllers
 {
-    [Route("/" + _controllerRelativeRoute)]
     public class RedirectController : ControllerBase
     {
-        private const string _controllerRelativeRoute = "redirect";
-        private const string _shortenUrlHandlingMethodRelativeRoute = "Index";
-
         private IShortenUrlService _shortenUrlService;
 
         public RedirectController(IShortenUrlService shortenUrlService)
@@ -26,7 +22,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route(_shortenUrlHandlingMethodRelativeRoute)]
+        [Route("redirect/{shortRelativeUrl}")]
         public IActionResult Index(string shortRelativeUrl)
         {
             if(string.IsNullOrEmpty(shortRelativeUrl))
@@ -41,11 +37,6 @@ namespace API.Controllers
             }
 
             return Redirect(longUrl);
-        }
-
-        public static string GetUrl(IUrlHelper helper, object values, string scheme)
-        {
-            return helper.Action(nameof(Index), typeof(RedirectController).GetName(), values, scheme);
         }
     }
 }

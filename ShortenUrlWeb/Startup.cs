@@ -28,14 +28,8 @@ namespace ShortenUrlWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAutofac();
-
             services.AddRazorPages();
             services.AddMvc();
-            services.AddControllers();
-
-            services.AddDbContext<UrlDbContext>(optionsBuilder =>
-                optionsBuilder.UseSqlServer(Configuration.GetConnectionString("url_db")));
         }
 
         public void ConfigureContainer(ContainerBuilder builder)

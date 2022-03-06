@@ -8,19 +8,21 @@ using System.Threading.Tasks;
 using API.Controllers;
 using Microsoft.AspNetCore.Mvc.Routing;
 using ShortenUrlWeb.Models.Home;
+using System.Net;
+using API.Extensions;
+using System.IO;
+using APICommunication;
 
 namespace ShortenUrlWeb.Controllers
 {
     [Route("/home")]
     public class HomeController : Controller
     {
-        private IShortenUrlService _shortenUrlService;
+        private IAPIClient client;
 
-        public HomeController(IShortenUrlService shortenUrlService)
+        public HomeController()
         {
-            Guard.NotNull(shortenUrlService, nameof(shortenUrlService));
-
-            _shortenUrlService = shortenUrlService;
+            client = APIClientFactory.CreateDefault();
         }
 
         [HttpGet]
@@ -42,28 +44,18 @@ namespace ShortenUrlWeb.Controllers
                 return PartialView("Result", result);
             }
 
-            var shortRelativeUrl = _shortenUrlService.CreateShortRelativeUrl(longUrl);
-            if(shortRelativeUrl == null)
+            var url = client.GetAbsoluteShortURLAsync(longUrl).Result;
+
+            if(string.IsNullOrEmpty(url))
             {
                 result.IsSuccessful = false;
-                result.Message = "Can't create short url!";
-
-                return PartialView("Result", result);
+                result.Message = "Can't create short url.";
             }
-
-            var values = new { shortRelativeUrl = shortRelativeUrl };
-
-            var url = RedirectController.GetUrl(Url, values, Request.Scheme);
-            if (url == null)
+            else
             {
-                result.IsSuccessful = false;
-                result.Message = "Can't create url to redirect tool!";
-
-                return PartialView("Result", result);
+                result.IsSuccessful = true;
+                result.InternalUrl = url;
             }
-
-            result.IsSuccessful = true;
-            result.InternalUrl = url;
 
             return PartialView("Result", result);
         }
