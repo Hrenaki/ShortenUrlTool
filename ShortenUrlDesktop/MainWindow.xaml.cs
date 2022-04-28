@@ -36,6 +36,8 @@ namespace ShortenUrlDesktop
         public MainWindow()
         {
             InitializeComponent();
+
+            ViewModel = new ShortenUrlViewModel();
         }
     }
 }
