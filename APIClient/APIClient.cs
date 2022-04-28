@@ -35,7 +35,7 @@ namespace APICommunication
 
         public async Task<string> GetOriginURLByAbsoluteShortURL(string absoluteShortURL)
         {
-            var request = BuildPostRequest(getLongURL, new Dictionary<string, object>() { { "shorturl", absoluteShortURL } });
+            var request = BuildGetRequest(getLongURL, new Dictionary<string, object>() { { "shorturl", absoluteShortURL } });
             var result = await ExecuteRequestAsync<string>(request);
             return result;
         }
@@ -48,6 +48,16 @@ namespace APICommunication
                 request.AddParameter(parameter.Key, parameter.Value, ParameterType.RequestBody);
             }
 
+            return request;
+        }
+
+        private RestRequest BuildGetRequest(string resource, Dictionary<string, object> parameters)
+        {
+            var request = new RestRequest(resource, Method.Get);
+            foreach (var parameter in parameters)
+            {
+                request.AddParameter(parameter.Key, parameter.Value, ParameterType.UrlSegment);
+            }
             return request;
         }
 
