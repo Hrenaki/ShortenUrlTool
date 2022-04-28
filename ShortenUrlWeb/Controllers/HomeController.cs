@@ -46,6 +46,8 @@ namespace ShortenUrlWeb.Controllers
 
             var url = client.GetAbsoluteShortURLAsync(longUrl).Result;
 
+            var originUrl = client.GetOriginURLByAbsoluteShortURL(url).Result;
+
             if(string.IsNullOrEmpty(url))
             {
                 result.IsSuccessful = false;
