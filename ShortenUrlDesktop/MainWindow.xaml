@@ -5,8 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShortenUrlDesktop"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
+        Title="MainWindow" Height="450" Width="800" x:Name="window">
+    <Grid DataContext="{Binding ElementName=window}">
+        <Grid Margin="10">
+            <TabControl DataContext="{Binding ViewModel}">
+                <TabItem Header="Shorten">
+                    <StackPanel>
+                        <TextBox Text="{Binding LongUrl}" />
+                        <TextBlock Text="{Binding ShortUrl}" />
+                        <Button Content="Shorten" Command="{Binding GetShortUrlCommand}"/>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Lengthen">
+                    
+                </TabItem>
+            </TabControl>
+        </Grid>
     </Grid>
 </Window>
