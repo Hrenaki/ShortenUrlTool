@@ -7,10 +7,17 @@ using RestSharp;
 
 namespace APICommunication
 {
+    public class APIResult<T>
+    {
+        public bool IsSuccessful { get; set; }
+        public string Message { get; set; }
+        public T Data { get; set; }
+    }
+
     public interface IAPIClient
     {
-        public Task<string> GetAbsoluteShortURLAsync(string originURL);
-        public Task<string> GetOriginURLByAbsoluteShortURL(string absoluteShortURL);
+        public Task<APIResult<string>> GetAbsoluteShortURLAsync(string originURL);
+        public Task<APIResult<string>> GetOriginURLByAbsoluteShortURL(string absoluteShortURL);
     }
 
     class APIClient : IAPIClient
@@ -26,14 +33,14 @@ namespace APICommunication
             client = new RestClient(apiBaseURL);
         }
 
-        public async Task<string> GetAbsoluteShortURLAsync(string originURL)
+        public async Task<APIResult<string>> GetAbsoluteShortURLAsync(string originURL)
         {
             var request = BuildPostRequest(shortenURL, new Dictionary<string, object>() { { "url", originURL } });
             var result = await ExecuteRequestAsync<string>(request);
             return result;
         }
 
-        public async Task<string> GetOriginURLByAbsoluteShortURL(string absoluteShortURL)
+        public async Task<APIResult<string>> GetOriginURLByAbsoluteShortURL(string absoluteShortURL)
         {
             var request = BuildGetRequest(getLongURL, new Dictionary<string, object>() { { "shorturl", absoluteShortURL } });
             var result = await ExecuteRequestAsync<string>(request);
@@ -61,10 +68,17 @@ namespace APICommunication
             return request;
         }
 
-        private async Task<T> ExecuteRequestAsync<T>(RestRequest request)
+        private async Task<APIResult<T>> ExecuteRequestAsync<T>(RestRequest request)
         {
             var response = await client.ExecuteAsync<T>(request);
-            return response.Data;
+            var result = new APIResult<T>()
+            {
+                IsSuccessful = response.IsSuccessful,
+                Message = response.ErrorMessage,
+                Data = response.Data
+            };
+
+            return result;
         }
     }
 }

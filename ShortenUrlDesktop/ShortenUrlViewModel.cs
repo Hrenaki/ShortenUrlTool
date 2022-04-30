@@ -41,6 +41,17 @@ namespace ShortenUrlDesktop
                 }
             }
         }
+
+        private string errorMessage;
+        public string ErrorMessage
+        {
+            get => errorMessage;
+            set
+            {
+                errorMessage = value;
+                OnPropertyChanged(nameof(ErrorMessage));
+            }
+        }
         #endregion
 
         #region Commands
@@ -64,12 +75,16 @@ namespace ShortenUrlDesktop
 
         public async void GetShortUrl()
         {
-            ShortUrl = await client.GetAbsoluteShortURLAsync(LongUrl);
+            var apiResult = await client.GetAbsoluteShortURLAsync(LongUrl);
+            ErrorMessage = apiResult.Message;
+            ShortUrl = apiResult.Data;
         }
 
         public async void GetLongUrlByShort()
         {
-            LongUrl = await client.GetOriginURLByAbsoluteShortURL(shortUrl);
+            var apiResult = await client.GetOriginURLByAbsoluteShortURL(shortUrl);
+            ErrorMessage = apiResult.Message;
+            LongUrl = apiResult.Data;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

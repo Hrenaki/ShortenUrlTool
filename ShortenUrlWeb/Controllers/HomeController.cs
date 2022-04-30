@@ -44,9 +44,8 @@ namespace ShortenUrlWeb.Controllers
                 return PartialView("Result", result);
             }
 
-            var url = client.GetAbsoluteShortURLAsync(longUrl).Result;
-
-            var originUrl = client.GetOriginURLByAbsoluteShortURL(url).Result;
+            var apiResult = client.GetAbsoluteShortURLAsync(longUrl).Result;
+            var url = apiResult.Data;
 
             if(string.IsNullOrEmpty(url))
             {
